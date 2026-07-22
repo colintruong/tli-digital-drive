@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }: {children: ReactNode}) => {
         if (error) {
             throw error;
         }
-        router.push('/dashboard');
+        router.push("/dashboard");  // after sign in, go to dashboard
     };
 
     const signUp = async (email: string, password: string) => {
@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }: {children: ReactNode}) => {
         if (error) {
             throw error;
         }
-        router.push('/dashboard');
+        router.push("/dashboard");  // after sign up, go to dashboard
     };
 
     const signOut = async () => {
@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }: {children: ReactNode}) => {
         if (error) {
             throw error;
         }
-        router.push('/');
+        router.push("/");   // after sign out, go to landing page
     };
 
     return (
