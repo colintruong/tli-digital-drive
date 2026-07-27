@@ -1,11 +1,11 @@
 "use client";
 
-import SignUpForm from "@/src/components/SignUpForm";
+import AuthForm from "@/src/components/AuthForm";
 
 export default function LoginPage() {
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <SignUpForm />
+    <div className="flex items-center justify-center min-h-screen bg-[#fff6f1]">
+      <AuthForm />
     </div>
   );
 }
