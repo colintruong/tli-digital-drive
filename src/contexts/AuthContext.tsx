@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }: {children: ReactNode}) => {
     };
 
     const signUp = async (name: string, email: string, password: string) => {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
             email,
             password,
             options: {
@@ -61,6 +61,9 @@ export const AuthProvider = ({ children }: {children: ReactNode}) => {
 
         if (error) {
             throw error;
+        }
+        if (data.user && data.user.identities?.length === 0) {
+            throw new Error("An account with this email already exists.");
         }
         router.push("/dashboard");  // after sign up, go to dashboard
     };

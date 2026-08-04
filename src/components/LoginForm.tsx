@@ -103,7 +103,7 @@ export default function LoginForm() {
 
       <button
         type="submit"
-        className="mt-auto w-full border border-black py-1 rounded-md mb-8"
+        className="mt-auto w-full py-1 rounded-md mb-8 bg-[#de88ff] text-[#ffffff] font-bold"
         disabled={loading}
       >
         {loading ? "Loading..." : "Log in"}

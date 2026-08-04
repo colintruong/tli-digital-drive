@@ -55,7 +55,7 @@ export default function AuthForm() {
         </button>
       </div>
 
-      <div className="text-xl font-bold self-start ml-6 mb-3">
+      <div className="font-heading text-3xl font-bold self-start ml-6 mb-3">
         {isLogin ? "Welcome back! :)" : "Create your account"}
       </div>
 
