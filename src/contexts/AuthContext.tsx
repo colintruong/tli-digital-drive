@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }: {children: ReactNode}) => {
         if (error) {
             throw error;
         }
-        router.push("/dashboard");  // after sign in, go to dashboard
+        router.push("/home");  // after sign in, go to dashboard
     };
 
     const signUp = async (name: string, email: string, password: string) => {
@@ -65,7 +65,7 @@ export const AuthProvider = ({ children }: {children: ReactNode}) => {
         if (data.user && data.user.identities?.length === 0) {
             throw new Error("An account with this email already exists.");
         }
-        router.push("/dashboard");  // after sign up, go to dashboard
+        router.push("/home");  // after sign up, go to dashboard
     };
 
     const signOut = async () => {

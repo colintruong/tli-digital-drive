@@ -97,6 +97,7 @@ export default function LoginForm() {
           {icon}
         </span>
       </div>
+      {/* WORK ON THIS LATER */}
       <div className="relative">
         <p className="absolute right-0">Forgot password?</p>
       </div>

@@ -1,9 +1,26 @@
-import Image from "next/image";
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/src/contexts/AuthContext";
 
 export default function Home() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading) {
+      if (user) {
+        router.push("/home");
+      } else {
+        router.push("/login");
+      }
+    }
+  }, [user, loading, router]);
+
   return (
-    <div className="flex min-h-screen items-center justify-center font-sans bg-white">
-      <h1 className="text-4xl">{`tLi's Digital Drive`}</h1>
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400"></div>
     </div>
-  );
+  )
 }
