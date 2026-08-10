@@ -37,7 +37,9 @@ export default function UploadForm({ onUploadComplete }: UploadFormProps) {
       }
 
       if (!isValidFileSize(file.size)) {
-        toast.error(`${file.name}: file too large (max ${MAX_FILE_SIZE / (1024 * 1024 * 1024)}GB)`);
+        toast.error(
+          `${file.name}: file too large (max ${MAX_FILE_SIZE / (1024 * 1024 * 1024)}GB)`,
+        );
         continue;
       }
 
@@ -70,6 +72,8 @@ export default function UploadForm({ onUploadComplete }: UploadFormProps) {
   };
 
   const handleUpload = async () => {
+    let successCount = 0;
+
     for (let i = 0; i < files.length; i++) {
       if (files[i].status !== "pending") {
         continue;
@@ -97,6 +101,7 @@ export default function UploadForm({ onUploadComplete }: UploadFormProps) {
         }
 
         updateFileStatus(i, "complete");
+        successCount++;
       } catch (err) {
         console.error("Upload error:", err);
         updateFileStatus(i, "error", "Network error");
@@ -104,41 +109,58 @@ export default function UploadForm({ onUploadComplete }: UploadFormProps) {
       }
     }
 
-    toast.success("Upload finished");
-    onUploadComplete();
+    if (successCount > 0) {
+      toast.success(`${successCount} file(s) uploaded successfully`);
+      onUploadComplete();
+    }
   };
 
   return (
-    <div>
-      <input
-        type="file"
-        multiple
-        accept="image/*,video/*"
-        onChange={handleFileSelect}
-        disabled={isUploading}
-      />
+    <div className="flex flex-col">
+      <div>
+        <label htmlFor="file-upload" className="border border-black">
+          <span>
+            hello
+          </span>
+        </label>
 
-      {files.length > 0 && (
-        <div>
-          {files.map((f, i) => (
-            <div key={i}>
-              {f.preview && (
-                <img src={f.preview} alt={f.file.name} width={60} height={60} />
-              )}
-              <span>{f.file.name}</span>
-              <span>- {f.status}</span>
-              {f.status === "error" && <span>({f.error})</span>}
-              {f.status === "pending" && (
-                <button onClick={() => removeFile(i)}>Remove</button>
-              )}
-            </div>
-          ))}
+        <input
+          id="file-upload"
+          type="file"
+          multiple
+          accept="image/*,video/*"
+          onChange={handleFileSelect}
+          disabled={isUploading}
+          className="hidden"
+        />
 
-          <button onClick={handleUpload} disabled={isUploading}>
-            {isUploading ? "Uploading" : "Upload"}
-          </button>
-        </div>
-      )}
+        {files.length > 0 && (
+          <div>
+            {files.map((f, i) => (
+              <div key={i}>
+                {f.preview && (
+                  <img
+                    src={f.preview}
+                    alt={f.file.name}
+                    width={60}
+                    height={60}
+                  />
+                )}
+                <span>{f.file.name}</span>
+                <span>- {f.status}</span>
+                {f.status === "error" && <span>({f.error})</span>}
+                {f.status === "pending" && (
+                  <button onClick={() => removeFile(i)}>Remove</button>
+                )}
+              </div>
+            ))}
+
+            <button onClick={handleUpload} disabled={isUploading}>
+              {isUploading ? "Uploading" : "Upload"}
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

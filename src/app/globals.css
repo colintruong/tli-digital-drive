@@ -9,7 +9,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-work-sans);
-  --font-heading: var(--font-playfair);
+  --font-heading: var(--font-fraunces);
 }
 
 @media (prefers-color-scheme: dark) {

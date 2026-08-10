@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Work_Sans } from "next/font/google";
+import { Fraunces, Work_Sans } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/src/contexts/AuthContext";
 import { Toaster } from "sonner";
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
   weight: ["500", "600", "700"],
 });
@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${playfair.variable} ${workSans.variable} antialiased`}
+        className={`${fraunces.variable} ${workSans.variable} antialiased`}
       >
         <AuthProvider>
           {children}
