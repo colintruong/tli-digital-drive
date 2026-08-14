@@ -8,4 +8,4 @@ export const s3Client = new S3Client({
     },
 });
 
-export const BUCKET_NAME = process.env.AWS_BUCKET_NAME!;
+export const BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME!;
