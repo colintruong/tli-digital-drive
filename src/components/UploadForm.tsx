@@ -58,7 +58,7 @@ export default function UploadForm({ onUploadComplete }: UploadFormProps) {
     },
   };
 
-  const isUploading = files.some((f) => f.status === "uploading");
+  const isUploading = files.some((f) => f.status === "uploading" || f.status === "finalizing");
 
   const successCount = files.filter((f) => f.status === "complete").length;
 
@@ -90,7 +90,7 @@ export default function UploadForm({ onUploadComplete }: UploadFormProps) {
         file,
         preview: file.type.startsWith("image/")
           ? URL.createObjectURL(file)
-          : undefined,
+          : file.type.startsWith("video/") ? "/video.png" : undefined,
         status: "pending",
         progress: 0,
         uploadedBytes: 0,
