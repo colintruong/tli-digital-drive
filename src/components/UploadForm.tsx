@@ -41,6 +41,11 @@ export default function UploadForm({ onUploadComplete }: UploadFormProps) {
       text: "text-[#757474]",
       bar: "bg-[#fc73c3]",
     },
+    finalizing: {
+      bg: "bg-[#ddf7e1]",
+      text: "text-[#1970b7]",
+      bar: "bg-[#1970b7]",
+    },
     complete: {
       bg: "bg-[#ddf7e1]",
       text: "text-[#2ab441]",
@@ -352,6 +357,7 @@ export default function UploadForm({ onUploadComplete }: UploadFormProps) {
                       >
                         <p>{f.status}</p>
                       </div>
+
                     </div>
 
                     {/* Progress bar */}
