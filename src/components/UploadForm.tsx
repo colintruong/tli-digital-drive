@@ -2,18 +2,12 @@
 "use client";
 
 import { useState } from "react";
-import { toast } from "sonner";
-import {
-  isValidFileType,
-  isValidFileSize,
-  MAX_FILE_SIZE,
-  formatFileSize,
-} from "@/src/utils/file";
+import { formatFileSize } from "@/src/utils/file";
 import { IoCloudUpload } from "react-icons/io5";
 import { RxCross1 } from "react-icons/rx";
 import { LuDot } from "react-icons/lu";
 
-interface UploadFile {
+export interface UploadFile {
   file: File;
   preview?: string;
   status: "pending" | "uploading" | "finalizing" | "complete" | "error";
@@ -23,11 +17,20 @@ interface UploadFile {
 }
 
 interface UploadFormProps {
-  onUploadComplete: () => void;
+  files: UploadFile[];
+  onFileSelect: (selectedFiles: File[]) => void;
+  onRemoveFile: (index: number) => void;
+  onUpload: () => void;
+  onClear: () => void;
 }
 
-export default function UploadForm({ onUploadComplete }: UploadFormProps) {
-  const [files, setFiles] = useState<UploadFile[]>([]);
+export default function UploadForm({
+  files,
+  onFileSelect,
+  onRemoveFile,
+  onUpload,
+  onClear,
+}: UploadFormProps) {
   const [isDragging, setIsDragging] = useState(false);
 
   const statusColors = {
@@ -58,7 +61,9 @@ export default function UploadForm({ onUploadComplete }: UploadFormProps) {
     },
   };
 
-  const isUploading = files.some((f) => f.status === "uploading" || f.status === "finalizing");
+  const isUploading = files.some(
+    (f) => f.status === "uploading" || f.status === "finalizing",
+  );
 
   const successCount = files.filter((f) => f.status === "complete").length;
 
@@ -67,165 +72,6 @@ export default function UploadForm({ onUploadComplete }: UploadFormProps) {
   const isComplete =
     hasFiles &&
     files.every((f) => f.status === "complete" || f.status === "error");
-
-  const handleFileSelect = (selectedFiles: File[]) => {
-    const newFiles: UploadFile[] = [];
-
-    for (const file of selectedFiles) {
-      if (!isValidFileType(file.type)) {
-        toast.error(`${file.name}: invalid file type`);
-        continue;
-      }
-
-      if (!isValidFileSize(file.size)) {
-        toast.error(
-          `${file.name}: file too large (max ${
-            MAX_FILE_SIZE / (1024 * 1024 * 1024)
-          }GB)`,
-        );
-        continue;
-      }
-
-      newFiles.push({
-        file,
-        preview: file.type.startsWith("image/")
-          ? URL.createObjectURL(file)
-          : file.type.startsWith("video/") ? "/video.png" : undefined,
-        status: "pending",
-        progress: 0,
-        uploadedBytes: 0,
-      });
-    }
-
-    setFiles((prev) => [...prev, ...newFiles]);
-  };
-
-  const removeFile = (index: number) => {
-    setFiles((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const updateFileStatus = (
-    index: number,
-    status: UploadFile["status"],
-    error?: string,
-  ) => {
-    setFiles((prev) =>
-      prev.map((f, i) => (i === index ? { ...f, status, error } : f)),
-    );
-  };
-
-  const updateFileProgress = (index: number, progress: number) => {
-    setFiles((prev) =>
-      prev.map((f, i) => (i === index ? { ...f, progress } : f)),
-    );
-  };
-
-  const updateUploadedBytes = (index: number, uploadedBytes: number) => {
-    setFiles((prev) =>
-      prev.map((f, i) => (i === index ? { ...f, uploadedBytes } : f)),
-    );
-  };
-
-  const handleUpload = async () => {
-    let uploadedCount = 0;
-
-    for (let i = 0; i < files.length; i++) {
-      if (files[i].status !== "pending") {
-        continue;
-      }
-
-      updateFileStatus(i, "uploading");
-
-      try {
-        const formData = new FormData();
-        formData.append("file", files[i].file);
-
-        const result = await new Promise<{
-          success: boolean;
-          error?: string;
-        }>((resolve, reject) => {
-          const xhr = new XMLHttpRequest();
-
-          xhr.open("POST", "/api/upload");
-
-          xhr.upload.onprogress = (event) => {
-            if (event.lengthComputable) {
-              const progress = Math.round((event.loaded / event.total) * 100);
-
-              updateFileProgress(i, progress);
-
-              updateUploadedBytes(
-                i,
-                Math.min(event.loaded, files[i].file.size),
-              );
-
-              if (progress === 100) {
-                updateFileStatus(i, "finalizing");
-              }
-            }
-          };
-
-          xhr.onload = () => {
-            try {
-              const response = JSON.parse(xhr.responseText);
-
-              if (xhr.status >= 200 && xhr.status < 300) {
-                resolve({
-                  success: true,
-                });
-              } else {
-                resolve({
-                  success: false,
-                  error: response.error || "Upload failed",
-                });
-              }
-            } catch {
-              resolve({
-                success: false,
-                error: "Invalid server response",
-              });
-            }
-          };
-
-          xhr.onerror = () => {
-            reject(new Error("Network error"));
-          };
-
-          xhr.send(formData);
-        });
-
-        if (!result.success) {
-          updateFileStatus(i, "error", result.error);
-
-          toast.error(
-            `${files[i].file.name}: ${result.error || "Upload failed"}`,
-          );
-
-          continue;
-        }
-
-        updateFileProgress(i, 100);
-
-        updateUploadedBytes(i, files[i].file.size);
-
-        updateFileStatus(i, "complete");
-
-        uploadedCount++;
-      } catch (err) {
-        console.error("Upload error:", err);
-
-        updateFileStatus(i, "error", "Network error");
-
-        toast.error(`${files[i].file.name}: Network error`);
-      }
-    }
-
-    if (uploadedCount > 0) {
-      toast.success(`${uploadedCount} file(s) uploaded successfully`);
-
-      onUploadComplete();
-    }
-  };
 
   const handleDragOver = (e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
@@ -247,7 +93,7 @@ export default function UploadForm({ onUploadComplete }: UploadFormProps) {
 
     const droppedFiles = Array.from(e.dataTransfer.files);
 
-    handleFileSelect(droppedFiles);
+    onFileSelect(droppedFiles);
   };
 
   const totalSize = files.reduce((total, f) => total + f.file.size, 0);
@@ -302,8 +148,7 @@ export default function UploadForm({ onUploadComplete }: UploadFormProps) {
           multiple
           accept="image/*,video/*"
           onChange={(e) => {
-            handleFileSelect(Array.from(e.target.files || []));
-
+            onFileSelect(Array.from(e.target.files || []));
             e.target.value = "";
           }}
           disabled={isUploading}
@@ -357,7 +202,6 @@ export default function UploadForm({ onUploadComplete }: UploadFormProps) {
                       >
                         <p>{f.status}</p>
                       </div>
-
                     </div>
 
                     {/* Progress bar */}
@@ -385,7 +229,7 @@ export default function UploadForm({ onUploadComplete }: UploadFormProps) {
                   {/* Right */}
                   <span
                     className="ml-5 mr-2 text-gray-500 px-1.5 py-1.5 rounded-lg transition-colors duration-200 hover:bg-[#eedaf3] hover:text-[#f01616]"
-                    onClick={() => removeFile(i)}
+                    onClick={() => onRemoveFile(i)}
                   >
                     <RxCross1 />
                   </span>
@@ -406,14 +250,14 @@ export default function UploadForm({ onUploadComplete }: UploadFormProps) {
                 {!isUploading && !isComplete && (
                   <>
                     <button
-                      onClick={() => setFiles([])}
+                      onClick={onClear}
                       className="px-2 py-2 rounded-xl bg-[#fff6f1] border border-[#a8a6a6] cursor-pointer"
                     >
                       Cancel
                     </button>
 
                     <button
-                      onClick={handleUpload}
+                      onClick={onUpload}
                       className="ml-3 px-2 py-2 rounded-xl bg-[#e97b8e] text-white cursor-pointer"
                     >
                       Upload
@@ -424,7 +268,7 @@ export default function UploadForm({ onUploadComplete }: UploadFormProps) {
                 {/* During uploading */}
                 {isUploading && (
                   <button
-                    onClick={() => setFiles([])}
+                    onClick={onClear}
                     className="px-2 py-2 rounded-xl bg-[#fff6f1] border border-[#a8a6a6] cursor-pointer"
                   >
                     Cancel
@@ -434,7 +278,7 @@ export default function UploadForm({ onUploadComplete }: UploadFormProps) {
                 {/* After uploading */}
                 {isComplete && (
                   <button
-                    onClick={() => setFiles([])}
+                    onClick={onClear}
                     className="ml-3 px-2 py-2 rounded-xl bg-[#e97b8e] text-white cursor-pointer"
                   >
                     Done
