@@ -27,19 +27,19 @@ export default function UploadModal({
     }
 
     function handleEscape(event: KeyboardEvent) {
-        if (event.key === "Escape") {
-            onClose();
-        }
+      if (event.key === "Escape") {
+        onClose();
+      }
     }
 
     if (isOpen) {
-        document.addEventListener("mousedown", handleClickOutside);
-        document.addEventListener("keydown", handleEscape);
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleEscape);
     }
 
     return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
-        document.removeEventListener("keydown", handleEscape);
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
     };
   }, [isOpen, onClose]);
 
@@ -48,14 +48,20 @@ export default function UploadModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-        <div ref={contentRef} className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl bg-white p-6">
-            <button onClick={onClose} className="absolute right-4 top-4 text-gray-400 hover:text-gray-700 transition-colors">
-                <RxCross1 size={20} />
-            </button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#000000]/40 backdrop-blur-xs px-4">
+      <div
+        ref={contentRef}
+        className="relative w-full max-w-2xl h-[85vh] overflow-hidden rounded-2xl bg-white p-6 flex flex-col"
+      >
+        <button
+          onClick={onClose}
+          className="absolute right-4 top-4 text-gray-400 hover:text-gray-700 transition-colors"
+        >
+          <RxCross1 size={20} />
+        </button>
 
-            {children}
-        </div>
+        {children}
+      </div>
     </div>
   );
 }

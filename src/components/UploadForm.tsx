@@ -99,8 +99,8 @@ export default function UploadForm({
   const totalSize = files.reduce((total, f) => total + f.file.size, 0);
 
   return (
-    <div className="flex flex-col mb-20">
-      <div className="w-full">
+    <div className="flex flex-col min-h-0 h-full">
+      <div className="flex-1 min-h-0 overflow-y-auto pr-2 mt-6">
         {/* Header */}
         <h1 className="font-heading text-3xl font-bold mb-1">Upload Files</h1>
 
@@ -155,6 +155,7 @@ export default function UploadForm({
           className="hidden"
         />
 
+        {/* File count */}
         <div className="mb-4 font-medium flex items-center">
           {hasFiles && (
             <>
@@ -172,7 +173,7 @@ export default function UploadForm({
           )}
         </div>
 
-        {/* File/upload information */}
+        {/* Files */}
         {hasFiles && (
           <div>
             {files.map((f, i) => {
@@ -183,7 +184,7 @@ export default function UploadForm({
                   key={i}
                   className="flex items-center rounded-3xl border border-gray-300 mb-4 px-4 py-3"
                 >
-                  {/* Left */}
+                  {/* Preview */}
                   {f.preview && (
                     <img
                       src={f.preview}
@@ -226,7 +227,7 @@ export default function UploadForm({
                     </div>
                   </div>
 
-                  {/* Right */}
+                  {/* Remove */}
                   <span
                     className="ml-5 mr-2 text-gray-500 px-1.5 py-1.5 rounded-lg transition-colors duration-200 hover:bg-[#eedaf3] hover:text-[#f01616]"
                     onClick={() => onRemoveFile(i)}
@@ -236,59 +237,63 @@ export default function UploadForm({
                 </div>
               );
             })}
+          </div>
+        )}
+      </div>
 
-            {/* Footer */}
-            <hr className="border-[#c5c1c1] mt-6 mb-4" />
+      {/* Fixed footer */}
+      {hasFiles && (
+        <div className="shrink-0">
+          <hr className="border-[#c5c1c1] mt-6 mb-4" />
 
-            <div className="flex justify-between">
-              <div className="text-[#7c7575] text-sm mt-5">
-                {successCount} of {files.length} uploaded
-              </div>
+          <div className="flex justify-between">
+            <div className="text-[#7c7575] text-sm mt-5">
+              {successCount} of {files.length} uploaded
+            </div>
 
-              <div>
-                {/* Before uploading */}
-                {!isUploading && !isComplete && (
-                  <>
-                    <button
-                      onClick={onClear}
-                      className="px-2 py-2 rounded-xl bg-[#fff6f1] border border-[#a8a6a6] cursor-pointer"
-                    >
-                      Cancel
-                    </button>
-
-                    <button
-                      onClick={onUpload}
-                      className="ml-3 px-2 py-2 rounded-xl bg-[#e97b8e] text-white cursor-pointer"
-                    >
-                      Upload
-                    </button>
-                  </>
-                )}
-
-                {/* During uploading */}
-                {isUploading && (
+            <div>
+              {/* Before uploading */}
+              {!isUploading && !isComplete && (
+                <>
                   <button
                     onClick={onClear}
                     className="px-2 py-2 rounded-xl bg-[#fff6f1] border border-[#a8a6a6] cursor-pointer"
                   >
                     Cancel
                   </button>
-                )}
 
-                {/* After uploading */}
-                {isComplete && (
                   <button
-                    onClick={onClear}
+                    onClick={onUpload}
                     className="ml-3 px-2 py-2 rounded-xl bg-[#e97b8e] text-white cursor-pointer"
                   >
-                    Done
+                    Upload
                   </button>
-                )}
-              </div>
+                </>
+              )}
+
+              {/* During uploading */}
+              {isUploading && (
+                <button
+                  onClick={onClear}
+                  className="px-2 py-2 rounded-xl bg-[#fff6f1] border border-[#a8a6a6] cursor-pointer"
+                >
+                  Cancel
+                </button>
+              )}
+
+              {/* After uploading */}
+              {isComplete && (
+                <button
+                  onClick={onClear}
+                  className="ml-3 px-2 py-2 rounded-xl bg-[#e97b8e] text-white cursor-pointer"
+                >
+                  Done
+                </button>
+              )}
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
