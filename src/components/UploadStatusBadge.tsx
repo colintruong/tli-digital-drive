@@ -32,7 +32,7 @@ export default function UploadStatusBadge({
                 </span>
             ) : (
                 <span>
-                    Uploading {completedFiles}/{totalFiles}...
+                    {completedFiles}/{totalFiles} uploaded
                 </span>
             )}
         </button>

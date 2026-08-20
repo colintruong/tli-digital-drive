@@ -51,7 +51,7 @@ export default function UploadModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#000000]/40 backdrop-blur-xs px-4">
       <div
         ref={contentRef}
-        className="relative w-full max-w-2xl h-[85vh] overflow-hidden rounded-2xl bg-white p-6 flex flex-col"
+        className="relative w-full max-w-2xl max-h-[85vh] overflow-hidden rounded-2xl bg-white p-6 flex flex-col animate-fade-in-up animate-duration-300 animate-fill-mode-both"
       >
         <button
           onClick={onClose}
