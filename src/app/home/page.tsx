@@ -1,22 +1,48 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import ProtectedRoute from "@/src/components/ProtectedRoute";
 import UploadForm, { UploadFile } from "@/src/components/UploadForm";
 import UploadModal from "@/src/components/UploadModal";
 import UploadStatusBadge from "@/src/components/UploadStatusBadge";
+import MediaGrid from "@/src/components/MediaGrid";
 import { useAuth } from "@/src/contexts/AuthContext";
 import {
   isValidFileType,
   isValidFileSize,
   MAX_FILE_SIZE,
 } from "@/src/utils/file";
+import { fetchUserMedia, MediaItemWithUrl } from "@/src/lib/media";
 
 export default function HomePage() {
   const { user, signOut } = useAuth();
   const [files, setFiles] = useState<UploadFile[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [media, setMedia] = useState<MediaItemWithUrl[]>([]);
+  const [mediaLoading, setMediaLoading] = useState(true);
+
+  const loadMedia = async () => {
+    setMediaLoading(true);
+    const result = await fetchUserMedia();
+    setMedia(result);
+    setMediaLoading(false);
+  };
+
+  useEffect(() => {
+    let ignore = false;
+
+    fetchUserMedia().then((result) => {
+      if (!ignore) {
+        setMedia(result);
+        setMediaLoading(false);
+      }
+    });
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   const handleFileSelect = (selectedFiles: File[]) => {
     const newFiles: UploadFile[] = [];
@@ -79,7 +105,7 @@ export default function HomePage() {
   };
 
   const handleUploadComplete = () => {
-    console.log("Upload complete - would refresh media grid here later");
+    loadMedia();
   };
 
   const handleUpload = async () => {
@@ -217,6 +243,10 @@ export default function HomePage() {
               onClear={() => setFiles([])}
             />
           </UploadModal>
+
+          <hr />
+
+          <MediaGrid media={media} loading={mediaLoading} />
         </div>
       </div>
     </ProtectedRoute>
