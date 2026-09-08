@@ -33,7 +33,7 @@ export default function MediaGrid({ media, loading }: MediaGridProps) {
                         <img
                         src={item.url}
                         alt={item.file_name}
-                        className="w-full h-40 object-cover rounded-xl"
+                        className="w-full h-40 object-cover rounded-xl cursor-pointer hover:scale-110"
                         />
                     ) : (
                         <div className="w-full h-40 flex items-center justify-center bg-gray-100 rounded-xl text-xs text-gray-400">

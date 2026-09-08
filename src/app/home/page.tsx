@@ -213,10 +213,10 @@ export default function HomePage() {
         <div className="w-2/5">
           <h1>Home</h1>
           <div className="flex justify-between">
-            <>
+            <div>
               <p>Logged in as: {user?.email}</p>
               <button onClick={signOut}>Sign out</button>
-            </>
+            </div>
 
             <button
               onClick={() => setIsModalOpen(true)}
@@ -226,14 +226,14 @@ export default function HomePage() {
             </button>
           </div>
 
-          <hr />
+          <hr className="mt-5 mb-5"/>
 
-          <button
+          {/* <button
             onClick={() => setIsModalOpen(true)}
             className="px-4 py-2 rounded-xl bg-[#e97b8e] text-white cursor-pointer"
           >
             Upload
-          </button>
+          </button> */}
 
           {!isModalOpen && (
             <UploadStatusBadge
@@ -254,8 +254,6 @@ export default function HomePage() {
               onClear={() => setFiles([])}
             />
           </UploadModal>
-
-          <hr />
 
           <MediaGrid media={media} loading={mediaLoading} />
         </div>
