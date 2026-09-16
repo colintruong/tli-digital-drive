@@ -254,8 +254,19 @@ export default function HomePage() {
               onClear={() => setFiles([])}
             />
           </UploadModal>
-
-          <MediaGrid media={media} loading={mediaLoading} />
+          {mediaLoading ? (
+            <div className="grid grid-cols-4 gap-4">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i}>
+                  <div className="w-full h-40 bg-gray-200 rounded-xl animate-pulse" />
+                  <div className="w-3/4 h-3 bg-gray-200 rounded mt-3 animate-pulse" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <MediaGrid media={media} loading={mediaLoading} />
+          )}
+          
         </div>
       </div>
     </ProtectedRoute>
