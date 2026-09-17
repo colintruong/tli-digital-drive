@@ -22,12 +22,21 @@ export default function HomePage() {
   const [media, setMedia] = useState<MediaItemWithUrl[]>([]);
   const [mediaLoading, setMediaLoading] = useState(true);
 
+  const skeletonWidths = ["w-1/4", "w-1/3", "w-1/2", "w-2/3", "w-3/4", "w-full"];
+
   const loadMedia = async () => {
     setMediaLoading(true);
     const result = await fetchUserMedia();
     setMedia(result);
     setMediaLoading(false);
   };
+
+  const [randomSkeletonWidths] = useState(() =>
+    Array.from(
+      { length: 16 },
+      () => skeletonWidths[Math.floor(Math.random() * skeletonWidths.length)],
+    ),
+  );
 
   useEffect(() => {
     let ignore = false;
@@ -210,11 +219,11 @@ export default function HomePage() {
   return (
     <ProtectedRoute>
       <div className="flex flex-col items-center min-h-screen bg-[#fff6f1]">
-        <div className="w-2/5">
-          <h1>Home</h1>
+        <div className="w-3/4">
+          <h1 className="mb-2">Home</h1>
           <div className="flex justify-between">
             <div>
-              <p>Logged in as: {user?.email}</p>
+              <p className="mb-2">Logged in as: {user?.email}</p>
               <button onClick={signOut}>Sign out</button>
             </div>
 
@@ -226,7 +235,7 @@ export default function HomePage() {
             </button>
           </div>
 
-          <hr className="mt-5 mb-5"/>
+          <hr className="mt-5 mb-5" />
 
           {/* <button
             onClick={() => setIsModalOpen(true)}
@@ -255,18 +264,20 @@ export default function HomePage() {
             />
           </UploadModal>
           {mediaLoading ? (
-            <div className="grid grid-cols-4 gap-4">
-              {Array.from({ length: 8 }).map((_, i) => (
+            <div className="grid grid-cols-[repeat(2,100px)] sm:grid-cols-[repeat(3,100px)] md:grid-cols-[repeat(4,120px)] lg:grid-cols-[repeat(5,140px)] xl:grid-cols-[repeat(8,160px)] justify-between gap-y-10">
+              {Array.from({ length: 40 }).map((_, i) => (
                 <div key={i}>
-                  <div className="w-full h-40 bg-gray-200 rounded-xl animate-pulse" />
-                  <div className="w-3/4 h-3 bg-gray-200 rounded mt-3 animate-pulse" />
+                  <div className="w-full h-25 sm:h-25 md:h-30 lg:h-35 xl:h-40 bg-gray-200 rounded-xl animate-pulse" />
+
+                  <div
+                    className={`${randomSkeletonWidths[i]} h-3 bg-gray-200 rounded mt-3 animate-pulse`}
+                  />
                 </div>
               ))}
             </div>
           ) : (
             <MediaGrid media={media} loading={mediaLoading} />
           )}
-          
         </div>
       </div>
     </ProtectedRoute>

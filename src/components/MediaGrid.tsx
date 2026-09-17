@@ -12,7 +12,7 @@ interface MediaGridProps {
 export default function MediaGrid({ media, loading }: MediaGridProps) {
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
+      <div className="flex items-center justify-center py-4">
         <div className="animate-spin rounded-full h-10 w-10 border-b-2- border-[#e97b8e]"></div>
       </div>
     );
@@ -27,14 +27,14 @@ export default function MediaGrid({ media, loading }: MediaGridProps) {
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+    <div className="grid grid-cols-[repeat(2,100px)] sm:grid-cols-[repeat(3,100px)] md:grid-cols-[repeat(4,120px)] lg:grid-cols-[repeat(5,140px)] xl:grid-cols-[repeat(8,160px)] justify-between gap-y-10">
       {media.map((item) => (
         <div key={item.id}>
           {item.url && item.file_type === "image" ? (
             <img
               src={item.url}
               alt={item.file_name}
-              className="w-full h-40 object-cover rounded-xl cursor-pointer hover:scale-105 transition duration-200"
+              className="w-full h-25 sm:h-25 md:h-30 lg:h-35 xl:h-40 object-cover rounded-xl cursor-pointer hover:scale-105 transition duration-200"
             />
           ) : item.url && item.file_type === "video" ? (
             <div className="relative cursor-pointer hover:scale-105 transition duration-200">
@@ -45,7 +45,7 @@ export default function MediaGrid({ media, loading }: MediaGridProps) {
               />
 
               <div className="absolute">
-                <FaCirclePlay className="absolute left-16 bottom-16 text-[#bf4391] text-3xl"  />
+                <FaCirclePlay className="absolute left-16 bottom-16 text-[#bf4391] text-3xl" />
               </div>
             </div>
           ) : (
