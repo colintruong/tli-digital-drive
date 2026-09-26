@@ -3,17 +3,17 @@
 import { useEffect, useRef } from "react";
 import { RxCross1 } from "react-icons/rx";
 
-interface UploadModalProps {
+interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
 }
 
-export default function UploadModal({
+export default function Modal({
   isOpen,
   onClose,
   children,
-}: UploadModalProps) {
+}: ModalProps) {
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

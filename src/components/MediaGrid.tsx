@@ -6,9 +6,10 @@ import MediaCard from "@/src/components/MediaCard";
 interface MediaGridProps {
   media: MediaItemWithUrl[];
   loading: boolean;
+  onItemClick: (item: MediaItemWithUrl) => void;
 }
 
-export default function MediaGrid({ media, loading }: MediaGridProps) {
+export default function MediaGrid({ media, loading, onItemClick }: MediaGridProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-4">
@@ -29,7 +30,7 @@ export default function MediaGrid({ media, loading }: MediaGridProps) {
     <div className="grid grid-cols-[repeat(2,100px)] sm:grid-cols-[repeat(3,100px)] md:grid-cols-[repeat(4,120px)] lg:grid-cols-[repeat(5,140px)] xl:grid-cols-[repeat(8,160px)] justify-between gap-y-10">
       {media.map((item) => (
         <div key={item.id}>
-          <MediaCard key={item.id} item={item} />
+          <MediaCard key={item.id} item={item} onClick={onItemClick} />
         </div>
       ))}
     </div>

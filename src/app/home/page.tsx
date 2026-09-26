@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import ProtectedRoute from "@/src/components/ProtectedRoute";
 import UploadForm, { UploadFile } from "@/src/components/UploadForm";
-import UploadModal from "@/src/components/UploadModal";
+import Modal from "@/src/components/Modal";
 import UploadStatusBadge from "@/src/components/UploadStatusBadge";
 import MediaGrid from "@/src/components/MediaGrid";
 import { useAuth } from "@/src/contexts/AuthContext";
@@ -14,6 +14,7 @@ import {
   MAX_FILE_SIZE,
 } from "@/src/utils/file";
 import { fetchUserMedia, MediaItemWithUrl } from "@/src/lib/media";
+import Image from "next/image";
 
 export default function HomePage() {
   const { user, signOut } = useAuth();
@@ -22,7 +23,17 @@ export default function HomePage() {
   const [media, setMedia] = useState<MediaItemWithUrl[]>([]);
   const [mediaLoading, setMediaLoading] = useState(true);
 
-  const skeletonWidths = ["w-1/4", "w-1/3", "w-1/2", "w-2/3", "w-3/4", "w-full"];
+  const [selectedMedia, setSelectedMedia] = useState<MediaItemWithUrl | null>(
+    null,
+  );
+  const skeletonWidths = [
+    "w-1/4",
+    "w-1/3",
+    "w-1/2",
+    "w-2/3",
+    "w-3/4",
+    "w-full",
+  ];
 
   const loadMedia = async () => {
     setMediaLoading(true);
@@ -33,7 +44,7 @@ export default function HomePage() {
 
   const [randomSkeletonWidths] = useState(() =>
     Array.from(
-      { length: 16 },
+      { length: 40 },
       () => skeletonWidths[Math.floor(Math.random() * skeletonWidths.length)],
     ),
   );
@@ -237,13 +248,6 @@ export default function HomePage() {
 
           <hr className="mt-5 mb-5" />
 
-          {/* <button
-            onClick={() => setIsModalOpen(true)}
-            className="px-4 py-2 rounded-xl bg-[#e97b8e] text-white cursor-pointer"
-          >
-            Upload
-          </button> */}
-
           {!isModalOpen && (
             <UploadStatusBadge
               files={files}
@@ -251,10 +255,7 @@ export default function HomePage() {
             />
           )}
 
-          <UploadModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-          >
+          <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
             <UploadForm
               files={files}
               onFileSelect={handleFileSelect}
@@ -262,7 +263,30 @@ export default function HomePage() {
               onUpload={handleUpload}
               onClear={() => setFiles([])}
             />
-          </UploadModal>
+          </Modal>
+
+          <Modal
+            isOpen={selectedMedia !== null}
+            onClose={() => setSelectedMedia(null)}
+          >
+            {selectedMedia && selectedMedia.file_type === "image" && (
+              <Image
+                src={selectedMedia.url!}
+                alt={selectedMedia.file_name}
+                fill
+                className="w-full h-full object-contain rounded-xl"
+              />
+            )}
+
+            {selectedMedia && selectedMedia.file_type === "video" && (
+              <video
+                src={selectedMedia.url}
+                controls
+                autoPlay
+                className="w-full h-full rounded-xl"
+              />
+            )}
+          </Modal>
           {mediaLoading ? (
             <div className="grid grid-cols-[repeat(2,100px)] sm:grid-cols-[repeat(3,100px)] md:grid-cols-[repeat(4,120px)] lg:grid-cols-[repeat(5,140px)] xl:grid-cols-[repeat(8,160px)] justify-between gap-y-10">
               {Array.from({ length: 40 }).map((_, i) => (
@@ -276,7 +300,11 @@ export default function HomePage() {
               ))}
             </div>
           ) : (
-            <MediaGrid media={media} loading={mediaLoading} />
+            <MediaGrid
+              media={media}
+              loading={mediaLoading}
+              onItemClick={(item) => setSelectedMedia(item)}
+            />
           )}
         </div>
       </div>

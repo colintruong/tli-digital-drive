@@ -7,13 +7,14 @@ import { FaCirclePlay } from "react-icons/fa6";
 
 interface MediaCardProps {
   item: MediaItemWithUrl;
+  onClick: (item: MediaItemWithUrl) => void;
 }
 
-export default function MediaCard({ item }: MediaCardProps) {
+export default function MediaCard({ item, onClick }: MediaCardProps) {
   const [imgError, setImgError] = useState(false);
 
   return (
-    <div>
+    <div onClick={() => onClick(item)}>
       {item.url && item.file_type === "image" && !imgError ? (
         <img
           src={item.url}
